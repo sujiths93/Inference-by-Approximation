@@ -1,8 +1,8 @@
 import sys
 import numpy
-#arg1=sys.argv[1]
-#num_of_samples=sys.arg[2]
-num_of_samples=1000000
+mode=sys.argv[1]
+num_of_samples=sys.argv[2]
+num_of_samples=int(num_of_samples)
 list_of_events=[]
 
 dic={}
@@ -23,16 +23,13 @@ que=[]
 #Get the inputs for the program
 print("INPUT")
 e=input()
-evidence,query=e.split()
+num_of_evidence,num_of_query=e.split()
 
-for i in range(int(evidence)):
+for i in range(int(num_of_evidence)):
     temp=input().upper()
     evi.append(temp)
-for i in range(int(query)):
+for i in range(int(num_of_query)):
     temp=input().upper()
-
-
-
     que.append(temp)
 
 for i in evi:
@@ -213,7 +210,9 @@ def likeliHood_sampling(num_of_samples):
         counting(samples,numerator_dic,True)
 
 
-
-prior_sampling(num_of_samples)
-rejection_sampling(num_of_samples)
-likeliHood_sampling(num_of_samples)
+if(mode=="p"):
+    prior_sampling(num_of_samples)
+if(mode=="r"):
+    rejection_sampling(num_of_samples)
+if(mode=="l"):
+    likeliHood_sampling(num_of_samples)
