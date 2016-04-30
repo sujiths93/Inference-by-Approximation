@@ -214,7 +214,6 @@ def likeliHood_sampling(num_of_samples):
 
 
 
-
 prior_sampling(num_of_samples)
 rejection_sampling(num_of_samples)
 likeliHood_sampling(num_of_samples)
