@@ -2,7 +2,7 @@ import sys
 import numpy
 #arg1=sys.argv[1]
 #num_of_samples=sys.arg[2]
-num_of_samples=10000
+num_of_samples=1000000
 list_of_events=[]
 
 dic={}
@@ -26,10 +26,13 @@ e=input()
 evidence,query=e.split()
 
 for i in range(int(evidence)):
-    temp=input()
+    temp=input().upper()
     evi.append(temp)
 for i in range(int(query)):
-    temp=input()
+    temp=input().upper()
+
+
+
     que.append(temp)
 
 for i in evi:
@@ -44,7 +47,8 @@ def result(num,denom):
         summ=(float(num)/float(denom))
     print(summ)
 
-def counting(samples,numerator_dic):
+def counting(samples,numerator_dic,isLikeliHood):
+
     num=0
     denom=0
     for s in samples:
@@ -56,16 +60,22 @@ def counting(samples,numerator_dic):
                 n+=1
 
         if n==len(numerator_dic):
-            num+=1
+            if isLikeliHood :
+                num+=s[5]
+            else:
+                num+=1
         d=0
         for key in denominator_dic:
             if s[key]!=denominator_dic[key]:
                 break
             else:
                 d+=1
-        
+
         if d==len(denominator_dic):
-            denom+=1
+            if isLikeliHood:
+               denom+=s[5]
+            else:
+                denom+=1
     result(num,denom)
 
 
@@ -100,7 +110,7 @@ def prior_sampling(num_of_samples):
             k,v=i.split()
             numerator_dic[topo.index(k)]=v
         numerator_dic[topo.index(q)]="T"
-        counting(samples,numerator_dic)
+        counting(samples,numerator_dic,False)
 
 def rejection_sampling(num_of_samples):
     samples=[]
@@ -135,9 +145,76 @@ def rejection_sampling(num_of_samples):
             k,v=i.split()
             numerator_dic[topo.index(k)]=v
         numerator_dic[topo.index(q)]="T"
-        counting(samples,numerator_dic)
+        counting(samples,numerator_dic,False)
+
+
+def likeliHood_sampling(num_of_samples):
+    global evi
+    samples=[]
+    eviDict={}
+    for i in evi:
+        arr=i.split(" ")
+        eviDict[arr[0]]=arr[1]
+    #To generate samples in the given topological order
+
+    for i in range(num_of_samples):
+        sample=[]
+        weight=1
+        for j in topo:
+            r=numpy.random.uniform(0,1)
+
+            if j=="A":
+                key=sample[0]+sample[1]
+                if eviDict.__contains__(j):
+                        prob = dic[j][key]
+                        sample.append(eviDict[j])
+                        if eviDict[j] == "T":
+                            weight = weight * prob
+                        else:
+                            weight = weight * (1 - prob)
+                        continue
+
+
+            elif j=="J" or j=="M":
+                key=sample[2]
+                if eviDict.__contains__(j):
+                        prob = dic[j][key]
+                        sample.append(eviDict[j])
+                        if eviDict[j] == "T":
+                            weight = weight * prob
+                        else:
+                            weight = weight * (1 - prob)
+                        continue
+            else:
+                key="T"
+                if eviDict.__contains__(j):
+                    prob = dic[j]["T"]
+                    sample.append(eviDict[j])
+                    if eviDict[j] == "T":
+                        weight = weight * prob
+                    else:
+                        weight = weight * (1 - prob)
+                    continue
+
+            if r<=dic[j][key]:
+                sample.append("T")
+            else:
+                sample.append("F")
+        sample.append(weight)
+        samples.append(sample)
+
+
+    for q in que:
+        numerator_dic={}
+        for i in evi:
+            k,v=i.split()
+            numerator_dic[topo.index(k)]=v
+        numerator_dic[topo.index(q)]="T"
+        counting(samples,numerator_dic,True)
+
+
 
 
 prior_sampling(num_of_samples)
 rejection_sampling(num_of_samples)
-
+likeliHood_sampling(num_of_samples)
