@@ -1,7 +1,8 @@
 import sys
 import numpy
-mode=sys.argv[1]
-num_of_samples=sys.argv[2]
+#mode=sys.argv[1]
+num_of_samples=10000
+    #sys.argv[2]
 num_of_samples=int(num_of_samples)
 list_of_events=[]
 
@@ -38,11 +39,17 @@ for i in evi:
 
 
 def result(num,denom):
+    spac=" "
     if denom==0:
+        print("DIVIDE BY ZERO")
         summ=0.0
     else:
         summ=(float(num)/float(denom))
-    print(summ)
+        f.write(str(summ).rstrip('\n'))
+        f.write(str(spac).rstrip('\n'))
+
+
+
 
 def counting(samples,numerator_dic,isLikeliHood):
 
@@ -209,10 +216,20 @@ def likeliHood_sampling(num_of_samples):
         numerator_dic[topo.index(q)]="T"
         counting(samples,numerator_dic,True)
 
+for i in range(0,10):
 
-if(mode=="p"):
+    f=open("C:\\Users\\sujit_000\\Desktop\\out.txt",mode="a")
+    #if(mode=="p"):
+    flagg=1
+    print("PRIOR SAMPLING\n")
     prior_sampling(num_of_samples)
-if(mode=="r"):
+    #if(mode=="r"):
+    flagg=1
+    print("REEJCTION SAMPLING\n")
     rejection_sampling(num_of_samples)
-if(mode=="l"):
+    #if(mode=="l"):
+    print("LIKELIHOOD WEIGHTING\n")
+    flag=1
     likeliHood_sampling(num_of_samples)
+    print("\n", file=f)
+    f.close()
